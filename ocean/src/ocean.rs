@@ -8,23 +8,28 @@ use std::slice::Iter;
 #[derive(Debug)]
 pub struct Ocean {
     // TODO: Fill in fields here.
+    pub beaches: Vec<Beach>,
+    pub reefs: Vec<Rc<RefCell<Reef>>>,
 }
 
 impl Ocean {
     pub fn new() -> Ocean {
-        unimplemented!();
+        Ocean {
+            beaches: Vec::new(),
+            reefs: Vec::new(),
+        }
     }
 
     pub fn add_beach(&mut self, beach: Beach) {
-        unimplemented!();
+        self.beaches.push(beach);
     }
 
     pub fn beaches(&self) -> Iter<Beach> {
-        unimplemented!();
+        self.beaches.iter()
     }
 
     pub fn reefs(&self) -> Iter<Rc<RefCell<Reef>>> {
-        unimplemented!();
+        self.reefs.iter()
     }
 
     /**
@@ -41,6 +46,22 @@ impl Ocean {
         n_clams: u32,
         n_algae: u32,
     ) -> Rc<RefCell<Reef>> {
-        unimplemented!();
+        let mut reef = Reef::new();
+        for _ in 0..n_minnows {
+            reef.add_prey(Box::new(Minnow::new(25)));
+        }
+        for _ in 0..n_shrimp {
+            reef.add_prey(Box::new(Shrimp::new(1)));
+        }
+        for _ in 0..n_clams {
+            reef.add_prey(Box::new(Clam::new()));
+        }
+        for _ in 0..n_algae {
+            reef.add_prey(Box::new(Algae::new()));
+        }
+        let rc1 = Rc::new(RefCell::new(reef));
+        let rc2 = Rc::clone(&rc1);
+        self.reefs.push(rc1);
+        rc2
     }
 }
