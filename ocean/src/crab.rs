@@ -124,7 +124,13 @@ impl Crab {
      * up to you to figure out which ones and where. Do not make any other changes
      * to the signature.
      */
-    pub fn choose_recipe(&self, cookbook: &Cookbook) -> Option<&Recipe> {
-        unimplemented!();
+    pub fn choose_recipe<'a, 'b>(&self, cookbook: &'b Cookbook) -> Option<&'b Recipe> {
+        let diet = &self.diet();
+        for recipe in cookbook.recipes() {
+            if recipe.diet() == *diet {
+                return Some(recipe);
+            }
+        }
+        None
     }
 }
