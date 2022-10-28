@@ -5,19 +5,21 @@ use std::slice::Iter;
 
 #[derive(Debug)]
 pub struct Beach {
-    // TODO: Declare the fields of the Beach struct here.
+    pub crabs: Vec<Crab>,
 }
 
 impl Beach {
     pub fn new() -> Beach {
-        unimplemented!();
+        Beach {
+            crabs: Vec::new(),
+        }
     }
 
     /**
      * Returns the number of crabs on the beach.
      */
     pub fn size(&self) -> usize {
-        unimplemented!();
+        self.crabs.len()
     }
 
     /**
@@ -28,15 +30,15 @@ impl Beach {
      *     - The newly added crab should be at the END of the collection.
      */
     pub fn add_crab(&mut self, crab: Crab) {
-        unimplemented!();
+        self.crabs.push(crab);
     }
 
     pub fn get_crab(&self, index: usize) -> &Crab {
-        unimplemented!();
+        &self.crabs[index]
     }
 
     pub fn crabs(&self) -> Iter<Crab> {
-        unimplemented!();
+        self.crabs.iter()
     }
 
     /**
@@ -45,14 +47,30 @@ impl Beach {
      *   - Some of a reference to the Crab with the highest speed.
      */
     pub fn get_fastest_crab(&self) -> Option<&Crab> {
-        unimplemented!();
+        if self.crabs.is_empty() {
+            None
+        } else {
+            let mut fastest_crab = &self.crabs[0];
+            for crab in self.crabs() {
+                if crab.speed() > fastest_crab.speed() {
+                    fastest_crab = crab;
+                }
+            }
+            Some(fastest_crab)
+        }
     }
 
     /**
      * Returns a vector of references to the crabs with a given name.
      */
     pub fn find_crabs_by_name(&self, name: &str) -> Vec<&Crab> {
-        unimplemented!();
+        let mut res_crabs = Vec::new();
+        for crab in self.crabs() {
+            if crab.name() == name {
+                res_crabs.push(crab);
+            }
+        }
+        res_crabs
     }
 
     /**
@@ -61,6 +79,12 @@ impl Beach {
      * the method should panic.
      */
     pub fn breed_crabs(&mut self, i: usize, j: usize, name: String) {
-        unimplemented!();
+        let crab1 = &self.crabs[i];
+        let crab2 = &self.crabs[j];
+        let diet = Diet::random_diet();
+        let color = Color::cross(crab1.breed(), crab2.breed());
+        let speed = 1;
+        let new_crab = Crab::new(name, speed, color, diet);
+        self.add_crab(new_crab);
     }
 }

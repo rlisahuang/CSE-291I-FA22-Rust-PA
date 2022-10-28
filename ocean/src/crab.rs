@@ -42,6 +42,10 @@ impl Crab {
         *(&self.diet)
     }
 
+    pub fn breed(&self) -> &Color {
+        &self.color()
+    }
+
     // PART 2 BELOW
     // ------------
 
