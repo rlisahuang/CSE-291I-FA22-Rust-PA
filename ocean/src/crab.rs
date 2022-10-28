@@ -13,6 +13,7 @@ pub struct Crab {
     pub speed: u32,
     pub color: Color,
     pub diet: Diet,
+    pub reefs: Vec<Rc<RefCell<Reef>>>,
 }
 
 // Do NOT implement Copy for Crab.
@@ -23,6 +24,7 @@ impl Crab {
             speed,
             color,
             diet,
+            reefs: Vec::new(),
         }
     }
 
@@ -53,7 +55,7 @@ impl Crab {
      * Have this crab discover a new reef, adding it to its list of reefs.
      */
     pub fn discover_reef(&mut self, reef: Rc<RefCell<Reef>>) {
-        unimplemented!();
+        self.reefs.push(reef);
     }
 
     /**
@@ -66,14 +68,25 @@ impl Crab {
      * If all reefs are empty, or this crab has no reefs, return None.
      */
     fn catch_prey(&mut self) -> Option<(Box<dyn Prey>, usize)> {
-        unimplemented!();
+        if self.reefs.is_empty() {
+            None
+        } else {
+            for (i, reef) in self.reefs.iter().enumerate() {
+                let ret = reef.borrow_mut().take_prey();
+                match ret {
+                    Some(prey) => return Some((prey, i)),
+                    None => continue,
+                }
+            }
+            None
+        }
     }
 
     /**
      * Releases the given prey back into the reef at the given index.
      */
     fn release_prey(&mut self, prey: Box<dyn Prey>, reef_index: usize) {
-        unimplemented!();
+        self.reefs[reef_index].borrow_mut().add_prey(prey);
     }
 
     /**
@@ -113,7 +126,21 @@ impl Crab {
      * Note: this pseudocode reads like a terrible poem.
      */
     pub fn hunt(&mut self) -> bool {
-        unimplemented!();
+        let mut escaped = Vec::new();
+        let mut caught = false;
+        while let Some((mut prey, reef_index)) = self.catch_prey() {
+            if prey.try_escape(self) || self.diet() != prey.diet() {
+                escaped.push((prey, reef_index));
+            } 
+            else {
+                caught = true;
+                break;
+            }
+        }
+        for (prey, reef_index) in escaped {
+            self.release_prey(prey, reef_index);
+        }
+        caught
     }
 
     /**
